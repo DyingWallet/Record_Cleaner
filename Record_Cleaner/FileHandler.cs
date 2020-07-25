@@ -40,27 +40,22 @@ namespace Record_Cleaner
         //private string regex_charactor = @"^.*?\s\d{4}(/\d{2}){2}\s(\d{2}:){2}\d{2}$";
 
         ///从文件中筛选有效发言
-        public void ReadFile()
+        public bool ReadFile()
         {
-            //打开文件
-            fs = new FileStream(fpath + fname, FileMode.Open, FileAccess.ReadWrite);
-
-            //开启文件流
+            //打开文件流
+            fs = new FileStream(fpath + fname, FileMode.Open, FileAccess.Read);
+            //开启文件读取流
             sr = new StreamReader(fs, Encoding.Default);
             string cha = "";
             string cont = "";
-
-            Match match = regex_fname.Match(fpath);
-
-            //获取文件名
-            if (match.Success) { fname = match.Value; }
-
             total_lines = 0;
             influenced_lines = 0;
-            //逐行读取文件
-            if (cha == null)
-                return;
 
+            //获取文件名
+            Match match = regex_fname.Match(fpath);
+            if (match.Success) { fname = match.Value; }
+
+            //逐行读取文件
             while ((cont = sr.ReadLine()) != null)
             {
                 total_lines++;
@@ -77,16 +72,27 @@ namespace Record_Cleaner
                     influenced_lines += 2;
                 }
             }
-            //for(int i = 0; i < contents.Count; i++)
-            //{
-            //    Console.WriteLine(contents[i].ToString());
-            //}
+            //关闭流
+            sr.Close();
+            fs.Close();
 
-            //Console.WriteLine("受影响行数/总行数：" + influenced_lines + "行/" + total_lines + "行");
+            if (total_lines == 0)
+                return false;
+
+            return true;
         }
 
-        //将有效信息写入新文件
-
-
+        ///将有效信息写入新文件
+        public bool WriteToFile()
+        {
+            fs = new FileStream(fpath + "New_" + fname, FileMode.Create, FileAccess.Write);
+            //开启文件写入流
+            sw = new StreamWriter(fs, Encoding.Default);
+            for(int i = 0; i < contents.Count; i++)
+                sw.WriteLine(contents[i]);
+            sw.Close();
+            fs.Close();
+            return true;
+        }
     }
 }

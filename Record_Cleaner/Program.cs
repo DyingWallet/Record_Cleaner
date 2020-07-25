@@ -6,13 +6,14 @@ namespace Record_Cleaner
     {
         static void Main(string[] args)
         {
-            //string fp = @"D:\文档\跑团相关\模组\逆转的环\Reversed_Ring_R1.txt";
-            string fp = @"D:\文档\跑团相关\模组\逆转的环\";
-            string fname = @"test.txt";
-
-            FileHandler handler = new FileHandler(fp,fname);
+            string fpath = @"D:\文档\跑团相关\模组\逆转的环\";
+            //string fname = @"test.txt";
+            string fname = @"Reversed_Ring_R1.txt";
+            
+            FileHandler handler = new FileHandler(fpath,fname);
 
             handler.ReadFile();
+            handler.WriteToFile();
         }
     }
 }
