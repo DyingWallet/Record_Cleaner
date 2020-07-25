@@ -9,41 +9,51 @@ namespace Record_Cleaner
     class FileHandler
     {
         //文件路径
-        public string path { get; set; }
-
+        public string fpath { get; private set; }
+        //文件名
+        public string fname { get; private set; }
         //文件流
         public FileStream fs { get; set; }
-
         //IO流
         public StreamReader sr { get; set; }
         public StreamWriter sw { get; set; }
-
+        //计数器
         public int total_lines { get; private set; }
         public int influenced_lines { get; private set; }
-
-        //实例化一个list用于存储有效发言
+        //list用于存储有效发言
         private List<string> contents = new List<string>();
-
-        //实例化正则类用于文本匹配
+        //用于文本匹配
         private Regex regex_comments = new Regex(@"^\s{4}（.*[）|\w]$");
         private Regex regex_charactor = new Regex(@"^.*?\s\d{4}(/\d{2}){2}\s(\d{2}:){2}\d{2}$");
+        //用于自动获取文件名
+        private Regex regex_fname = new Regex(@"\w*[.]\w*$");
 
+        public FileHandler(string fpath, string fname)
+        {
+            this.fpath = fpath;
+            this.fname = fname;
+        }
 
         //匹配场外发言
         //private string regex_comments = @"^\s{4}（.*）$";
         //匹配发言者记录（id yyyy/MM/dd HH:mm:ss）
         //private string regex_charactor = @"^.*?\s\d{4}(/\d{2}){2}\s(\d{2}:){2}\d{2}$";
 
-        ///读取文件
+        ///从文件中筛选有效发言
         public void ReadFile()
         {
             //打开文件
-            fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            fs = new FileStream(fpath + fname, FileMode.Open, FileAccess.ReadWrite);
 
             //开启文件流
             sr = new StreamReader(fs, Encoding.Default);
             string cha = "";
             string cont = "";
+
+            Match match = regex_fname.Match(fpath);
+
+            //获取文件名
+            if (match.Success) { fname = match.Value; }
 
             total_lines = 0;
             influenced_lines = 0;
@@ -72,14 +82,11 @@ namespace Record_Cleaner
             //    Console.WriteLine(contents[i].ToString());
             //}
 
-            Console.WriteLine("受影响行数/总行数：" + influenced_lines + "行/" + total_lines + "行");
+            //Console.WriteLine("受影响行数/总行数：" + influenced_lines + "行/" + total_lines + "行");
         }
 
-        //删除无用部分
-        public int DelComment()
-        {
-            return 0;
-        }
+        //将有效信息写入新文件
+
 
     }
 }
