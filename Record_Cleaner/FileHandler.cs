@@ -23,7 +23,9 @@ namespace Record_Cleaner
         //list用于存储有效发言
         private List<string> contents = new List<string>();
         //用于文本匹配
-        private Regex regex_comments = new Regex(@"^\s{4}（.*[）|\w]$");
+        private Regex regex_comments = new Regex(@"^\s*?[（|(].*([）|)|\w]|[\W]|([)|）][(|（]))$");
+        //private Regex regex_comments = new Regex(@"^\s*?[（|(].*([）|)|\w]||([)|）][(|（]))$");
+        private Regex regex_space = new Regex(@"^\s*?$");
         private Regex regex_charactor = new Regex(@"^.*?\s\d{4}(/\d{2}){2}\s(\d{2}:){2}\d{2}$");
         //用于自动获取文件名
         private Regex regex_fname = new Regex(@"\w*[.]\w*$");
@@ -63,7 +65,7 @@ namespace Record_Cleaner
                 if (regex_charactor.IsMatch(cont))
                     cha = cont;
                 //判断是否为场外，不是则记录
-                else if (!regex_comments.IsMatch(cont))
+                else if (!regex_comments.IsMatch(cont) && !regex_space.IsMatch(cont))
                 {
                     //记录发言人
                     contents.Add(cha);
@@ -85,10 +87,10 @@ namespace Record_Cleaner
         ///将有效信息写入新文件
         public bool WriteToFile()
         {
-            fs = new FileStream(fpath + "New_" + fname, FileMode.Create, FileAccess.Write);
+            fs = new FileStream(fpath + "Cleaned_" + fname, FileMode.Create, FileAccess.Write);
             //开启文件写入流
             sw = new StreamWriter(fs, Encoding.Default);
-            for(int i = 0; i < contents.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
                 sw.WriteLine(contents[i]);
             sw.Close();
             fs.Close();

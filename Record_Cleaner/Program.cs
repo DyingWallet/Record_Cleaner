@@ -8,7 +8,7 @@ namespace Record_Cleaner
         {
             string fpath = @"D:\文档\跑团相关\模组\逆转的环\";
             //string fname = @"test.txt";
-            string fname = @"Reversed_Ring_R1.txt";
+            string fname = @"Reversed_Ring_R2.txt";
             
             FileHandler handler = new FileHandler(fpath,fname);
 
